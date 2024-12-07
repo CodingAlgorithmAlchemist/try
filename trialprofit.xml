@@ -1,0 +1,150 @@
+<xml xmlns="https://developers.google.com/blockly/xml">
+  <variables>
+    <variable id="stake_var">Stake</variable>
+    <variable id="martingale_var">Martingale</variable>
+    <variable id="initial_stake_var">InitialStake</variable>
+    <variable id="even_count_var">EvenDigitsCount</variable>
+    <variable id="odd_count_var">OddDigitsCount</variable>
+    <variable id="even_percentage_var">EvenPercentage</variable>
+    <variable id="odd_percentage_var">OddPercentage</variable>
+    <variable id="digit_list_var">DigitList</variable>
+    <variable id="trade_percentage_var">TradePercentage</variable>
+  </variables>
+  <block type="trade_definition" id="trade_def" deletable="false" x="0" y="0">
+    <statement name="INITIALIZATION">
+      <block type="variables_set" id="set_stake">
+        <field name="VAR" id="stake_var">Stake</field>
+        <value name="VALUE">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+        <next>
+          <block type="variables_set" id="set_martingale">
+            <field name="VAR" id="martingale_var">Martingale</field>
+            <value name="VALUE">
+              <block type="math_number">
+                <field name="NUM">2</field>
+              </block>
+            </value>
+            <next>
+              <block type="variables_set" id="set_initial_stake">
+                <field name="VAR" id="initial_stake_var">InitialStake</field>
+                <value name="VALUE">
+                  <block type="math_number">
+                    <field name="NUM">1</field>
+                  </block>
+                </value>
+                <next>
+                  <block type="variables_set" id="set_trade_percentage">
+                    <field name="VAR" id="trade_percentage_var">TradePercentage</field>
+                    <value name="VALUE">
+                      <block type="math_number">
+                        <field name="NUM">80</field>
+                      </block>
+                    </value>
+                    <next>
+                      <block type="variables_set" id="init_digit_list">
+                        <field name="VAR" id="digit_list_var">DigitList</field>
+                        <value name="VALUE">
+                          <block type="lists_create_with"></block>
+                        </value>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </statement>
+    <statement name="BEFOREPURCHASE_STACK">
+      <!-- Analyze digits and calculate percentages -->
+      <block type="controls_forEach" id="analyze_digits">
+        <field name="VAR">digit</field>
+        <value name="LIST">
+          <block type="variables_get">
+            <field name="VAR" id="digit_list_var">DigitList</field>
+          </block>
+        </value>
+        <statement name="DO">
+          <block type="controls_if">
+            <value name="IF0">
+              <block type="math_number_property">
+                <mutation divisor_input="false"></mutation>
+                <field name="PROPERTY">EVEN</field>
+                <value name="NUMBER_TO_CHECK">
+                  <block type="variables_get">
+                    <field name="VAR">digit</field>
+                  </block>
+                </value>
+              </block>
+            </value>
+            <statement name="DO0">
+              <block type="math_change">
+                <field name="VAR" id="even_count_var">EvenDigitsCount</field>
+                <value name="DELTA">
+                  <block type="math_number">
+                    <field name="NUM">1</field>
+                  </block>
+                </value>
+              </block>
+            </statement>
+            <statement name="ELSE">
+              <block type="math_change">
+                <field name="VAR" id="odd_count_var">OddDigitsCount</field>
+                <value name="DELTA">
+                  <block type="math_number">
+                    <field name="NUM">1</field>
+                  </block>
+                </value>
+              </block>
+            </statement>
+          </block>
+        </statement>
+      </block>
+    </statement>
+    <statement name="AFTERPURCHASE_STACK">
+      <!-- Trade outcome handling -->
+      <block type="controls_if" id="trade_outcome">
+        <mutation else="1"></mutation>
+        <value name="IF0">
+          <block type="contract_check_result">
+            <field name="CHECK_RESULT">win</field>
+          </block>
+        </value>
+        <statement name="DO0">
+          <block type="variables_set">
+            <field name="VAR" id="stake_var">Stake</field>
+            <value name="VALUE">
+              <block type="variables_get">
+                <field name="VAR" id="initial_stake_var">InitialStake</field>
+              </block>
+            </value>
+          </block>
+        </statement>
+        <statement name="ELSE">
+          <block type="variables_set">
+            <field name="VAR" id="stake_var">Stake</field>
+            <value name="VALUE">
+              <block type="math_arithmetic">
+                <field name="OP">MULTIPLY</field>
+                <value name="A">
+                  <block type="variables_get">
+                    <field name="VAR" id="stake_var">Stake</field>
+                  </block>
+                </value>
+                <value name="B">
+                  <block type="variables_get">
+                    <field name="VAR" id="martingale_var">Martingale</field>
+                  </block>
+                </value>
+              </block>
+            </value>
+          </block>
+        </statement>
+      </block>
+    </statement>
+  </block>
+</xml>
